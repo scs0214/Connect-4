@@ -77,7 +77,7 @@ public:
         update_simbolito();
         board[col][y] = simbolito;
 
-        return check_victoria(col, y);
+        return check_victory(col, y);
     }
 
     bool elegir_column() {
@@ -179,7 +179,7 @@ public:
         else { return false; }
     }
 
-    bool check_victoria(int col, int fila) {
+    bool check_victory(int col, int fila) {
 
         return check_column(col) || check_fila(fila) || check_diagonal(col, fila);
     }
