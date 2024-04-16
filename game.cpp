@@ -1,171 +1,113 @@
-
 #include <iostream>
-#include <cstdlib> // Para la función rand
 using namespace std;
 
-const int filas = 6, columnas = 7;
+const int rows = 6, columns = 7;
 
-class Juego {
+class Game {
 private:
-    char** cuadricula;
-    int jugador;
-    char caracter;
+
+    char** board;
+    //  1 = player1
+    // -1 = player2
+    int player;
+    char simbolito;
 
 public:
-    Juego();
-    Juego(char** cuadricula, int jugador) { this->cuadricula = cuadricula; this->jugador = jugador; };
-    Juego(char** cuadricula, int jugador, char caracter) { this->cuadricula = cuadricula; this->jugador = jugador; this->caracter = caracter; };
+
+    Game();
+    Game(char** board, int player) { this->board = board; this->player= player; };
+    Game(char** board, int player, char simbolito) { this->board = board; this->player= player; this->simbolito = simbolito; };
     
-    void siguiente_jugador() {
-        jugador *= -1;
+    void next_player() {
+        player*= -1;
     }
 
-    void actualizar_caracter() {
-        if (jugador == 1) {
-            caracter = '#';
+    void update_simbolito() {
+        if (player== 1) {
+            simbolito = 'X';
         }
         else {
-            caracter = 'O';
+            simbolito = 'O';
         }
     }
 
-    void llenar_cuadricula() {
-        cuadricula = new char*[columnas];
-        for (int i = 0; i < columnas; i++) {
-            cuadricula[i] = new char[filas];
-        }
-        for (int i = 0; i < columnas; i++) {
-            for (int j = 0; j < filas; j++) {
-                cuadricula[i][j] = '.';
+    void lfill_board() {
+        for (int i = 0; i < columns; i++) {
+            for (int j = 0; j < rows; j++) {
+                board[i][j] = '.';
             }
         }
     }
 
-    void mostrar_cuadricula() {
+    void show_board() {
+
+        // X : player1
+        // O : player2
         system("cls");
         cout << "\n   1     2     3     4     5     6     7\n\n";
 
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                cout << "|  " << cuadricula[j][i] << "  ";
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                cout << "|  " << board[j][i] << "  ";
             }
             cout << "|" << endl;
         }
         cout << endl;
     }
 
-    void mostrar_ganador() {
-        cout << "\a¡Felicidades! ¡El jugador " << jugador << " acaba de ganar!" << endl;
+    void show_winner() {
+        cout << "\a¡Felicidades! ¡El player" << player<< " acaba de ganar!" << endl;
     }
 
-    bool jugar_en_columna(int col) {
+    bool play_en_column(int col) {
+
         int y = 0;
-        for (int i = 0; i < filas; i++) {
-            if (cuadricula[col][i] == '.') {
-                if (y < filas - 1) { y++; }
+
+        for (int i = 0; i < rows; i++) {
+
+            if (board[col][i] == '.') {
+                if (y < rows - 1) { y++; }
             }
             else {
                 if (y > 0) { y--; }
                 break;
             }
         }
-        actualizar_caracter();
-        cuadricula[col][y] = caracter;
+
+        update_simbolito();
+        board[col][y] = simbolito;
+
         return revisar_victoria(col, y);
     }
 
-    bool elegir_columna() {
-        cout << "¡Es el turno del jugador " << jugador << "!\n\n";   // nombre del jugador
+    bool elegir_column() {
+
+        cout << "¡Es el turno del player" << player<< "!\n\n";   // nombre del player
         int col = 0;
         bool hecho = false;
-        do {
-            cout << "Columna: ";
-            if (jugador == 1) {
-                col = elegir_movimiento(); // IA jugando
-            } else {
-                cin >> col; // Entrada del jugador humano
-            }
 
-            if (col > 0 && col <= columnas) {
-                if (cuadricula[col - 1][0] == '.') {
+        do {
+            cout << "column: ";
+            cin >> col;
+
+            if (col > 0 && col <= columns) {
+                if (board[col - 1][0] == '.') {
                     hecho = true;
                     col--;
                 }
             }
+
         } while (!hecho);
-        return jugar_en_columna(col);
+
+        return play_en_column(col);
     }
 
-    int elegir_movimiento() {
-        // Estrategia de la IA:
-        // Buscar líneas de tres fichas tanto propias como del enemigo en todas las direcciones.
-        // Si encuentra una línea propia, intentará completarla.
-        // Si encuentra una línea del enemigo, intentará bloquearla.
-        for (int col = 0; col < columnas; col++) {
-            for (int fila = 0; fila < filas; fila++) {
-                if (cuadricula[col][fila] == '.') {
-                    if (es_movimiento_ganador(col, fila, jugador)) {
-                        return col;
-                    }
-                    if (es_movimiento_ganador(col, fila, -jugador)) {
-                        return col;
-                    }
-                }
-            }
-        }
-        // Si no encuentra una jugada estratégica, elige una columna aleatoria.
-        return rand() % columnas + 1;
-    }
+    bool revisar_column(int col) {
 
-    bool es_movimiento_ganador(int col, int fila, int jugador) {
-        char temp = caracter;
-        caracter = jugador == 1 ? '#' : 'O'; // Temporalmente asignamos el carácter del jugador para probar el movimiento
-        bool resultado = buscar_linea_tres(col, fila, jugador);
-        caracter = temp; // Restauramos el carácter original
-        return resultado;
-    }
-
-    bool buscar_linea_tres(int col, int fila, int jugador) {
-        // Definimos las ocho direcciones posibles
-        int dir_filas[] = { -1, -1, -1, 0, 1, 1, 1, 0 };
-        int dir_columnas[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
-
-        // Buscamos líneas de tres fichas en cada dirección
-        for (int d = 0; d < 8; d++) {
-            int contador = 0;
-            int x = col;
-            int y = fila;
-
-            // Recorremos en la dirección d hasta encontrar una ficha diferente a la nuestra
-            while (x >= 0 && x < columnas && y >= 0 && y < filas && cuadricula[x][y] == caracter) {
-                x += dir_columnas[d];
-                y += dir_filas[d];
-                contador++;
-                if (contador == 3) {
-                    // Si encontramos una línea de tres, verificamos si el próximo movimiento es estratégico
-                    x += dir_columnas[d];
-                    y += dir_filas[d];
-                    if (x >= 0 && x < columnas && y >= 0 && y < filas && cuadricula[x][y] == '.') {
-                        return true;
-                    }
-                    break;
-                }
-            }
-        }
-        // Si no se encontró una línea de tres en ninguna dirección estratégica, retornamos false
-        return false;
-    }
-
-    bool revisar_victoria(int col,
-
- int fila) {
-        return revisar_col(col) || revisar_fila(fila) || revisar_diagonal(col, fila);
-    }
-
-    bool revisar_col(int col) {
         int contador = 0;
-        for (int fila = 0; fila < filas; fila++) {
-            if (cuadricula[col][fila] == caracter) {
+
+        for (int fila = 0; fila < rows; fila++) {
+            if (board[col][fila] == simbolito) {
                 contador++;
                 if (contador == 4) {
                     return true;
@@ -179,9 +121,11 @@ public:
     }
 
     bool revisar_fila(int fila) {
+
         int contador = 0;
-        for (int col = 0; col < columnas; col++) {
-            if (cuadricula[col][fila] == caracter) {
+
+        for (int col = 0; col < columns; col++) {
+            if (board[col][fila] == simbolito) {
                 contador++;
                 if (contador == 4) {
                     return true;
@@ -195,67 +139,95 @@ public:
     }
 
     bool revisar_diagonal(int col, int fila) {
-        // Implementación de revisión de diagonales
-        int dir_filas[] = { -1, -1, 1, 1 };
-        int dir_columnas[] = { -1, 1, 1, -1 };
+        
+        int indice = 1, contador = 1;
 
-        for (int d = 0; d < 4; d++) {
-            int contador = 0;
-            int x = col;
-            int y = fila;
-
-            while (x >= 0 && x < columnas && y >= 0 && y < filas && cuadricula[x][y] == caracter) {
-                x += dir_columnas[d];
-                y += dir_filas[d];
-                contador++;
-                if (contador == 3) {
-                    // Si encontramos una línea de tres, verificamos si el próximo movimiento es estratégico
-                    x += dir_columnas[d];
-                    y += dir_filas[d];
-                    if (x >= 0 && x < columnas && y >= 0 && y < filas && cuadricula[x][y] == '.') {
-                        return true;
-                    }
-                    break;
-                }
-            }
+        while ((col+indice) < columns && (fila+indice) < rows) {
+            if (board[col + indice][fila + indice] == simbolito) {
+                contador++; indice++;
+            } else { break; }
         }
-        return false;
+
+        indice = 1;
+        while ((col - indice) >= 0 && (fila - indice) >= 0) {
+            if (board[col - indice][fila - indice] == simbolito) {
+                contador++; indice++;
+            }
+            else { break; }
+        }
+
+        if (contador >= 4) { return true; }
+        else { contador = 1; }
+
+        indice = 1;
+        while ((col + indice) < columns && (fila - indice) >= 0) {
+            if (board[col + indice][fila - indice] == simbolito) {
+                contador++; indice++;
+            }
+            else { break; }
+        }
+
+        indice = 1;
+        while ((col - indice) >= 0 && (fila + indice) < rows) {
+            if (board[col - indice][fila + indice] == simbolito) {
+                contador++; indice++;
+            }
+            else { break; }
+        }
+
+        if (contador >= 4) { return true; }
+        else { return false; }
     }
 
-    bool jugar() {
-        mostrar_cuadricula();
-        if (elegir_columna()) {
-            mostrar_cuadricula();
-            mostrar_ganador();
+    bool revisar_victoria(int col, int fila) {
+
+        return revisar_column(col) || revisar_fila(fila) || revisar_diagonal(col, fila);
+    }
+
+    bool play() {
+
+        show_board();
+        if (elegir_column()) {
+            show_board();
+            show_winner();
             return true;
         }
         else {
-            siguiente_jugador();
+            next_player();
             return false;
         }
     }
 };
 
-Juego inicializar_cuadricula(int jugador) {
-    char** cuadricula = new char*[columnas];
-    for (int i = 0; i < columnas; i++) {
-        cuadricula[i] = new char[filas];
+Game inicializar_board(int player) {
+
+    char** board = new char*[columns];
+    for (int i = 0; i < columns; i++) {
+        board[i] = new char[rows];
     }
-    Juego juego(cuadricula, jugador);
-    juego.llenar_cuadricula();
-    return juego;
+
+    Game Game(board, player);
+
+    Game.lfill_board();
+
+    return Game;
 }
 
-void comenzar_juego() {
-    Juego juego = inicializar_cuadricula(1);   // parámetro: número del que comienza
-    bool ganado = false; 
-    while (!ganado) {
-        if (juego.jugar()) {
-            ganado = true;
+void comenzar_Game() {
+
+    Game Game = inicializar_board(1);   // parámetro: número del que comienza
+
+    bool won = false; 
+
+    while (!won) {
+
+        if (Game.play()) {
+            won = true;
         };
     }
 }
 
 int main() {
-    comenzar_juego();
+    
+    comenzar_Game();
 }
