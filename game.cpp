@@ -106,8 +106,8 @@ public:
 
         int contador = 0;
 
-        for (int fila = 0; fila < rows; fila++) {
-            if (board[col][fila] == simbolito) {
+        for (int row = 0; row < rows; row++) {
+            if (board[col][row] == simbolito) {
                 contador++;
                 if (contador == 4) {
                     return true;
@@ -120,12 +120,12 @@ public:
         return false;
     }
 
-    bool check_fila(int fila) {
+    bool check_row(int row) {
 
         int contador = 0;
 
         for (int col = 0; col < columns; col++) {
-            if (board[col][fila] == simbolito) {
+            if (board[col][row] == simbolito) {
                 contador++;
                 if (contador == 4) {
                     return true;
@@ -138,19 +138,19 @@ public:
         return false;
     }
 
-    bool check_diagonal(int col, int fila) {
+    bool check_diagonal(int col, int row) {
         
         int indice = 1, contador = 1;
 
-        while ((col+indice) < columns && (fila+indice) < rows) {
-            if (board[col + indice][fila + indice] == simbolito) {
+        while ((col+indice) < columns && (row+indice) < rows) {
+            if (board[col + indice][row + indice] == simbolito) {
                 contador++; indice++;
             } else { break; }
         }
 
         indice = 1;
-        while ((col - indice) >= 0 && (fila - indice) >= 0) {
-            if (board[col - indice][fila - indice] == simbolito) {
+        while ((col - indice) >= 0 && (row - indice) >= 0) {
+            if (board[col - indice][row - indice] == simbolito) {
                 contador++; indice++;
             }
             else { break; }
@@ -160,16 +160,16 @@ public:
         else { contador = 1; }
 
         indice = 1;
-        while ((col + indice) < columns && (fila - indice) >= 0) {
-            if (board[col + indice][fila - indice] == simbolito) {
+        while ((col + indice) < columns && (row - indice) >= 0) {
+            if (board[col + indice][row - indice] == simbolito) {
                 contador++; indice++;
             }
             else { break; }
         }
 
         indice = 1;
-        while ((col - indice) >= 0 && (fila + indice) < rows) {
-            if (board[col - indice][fila + indice] == simbolito) {
+        while ((col - indice) >= 0 && (row + indice) < rows) {
+            if (board[col - indice][row + indice] == simbolito) {
                 contador++; indice++;
             }
             else { break; }
@@ -179,9 +179,9 @@ public:
         else { return false; }
     }
 
-    bool check_victory(int col, int fila) {
+    bool check_victory(int col, int row) {
 
-        return check_column(col) || check_fila(fila) || check_diagonal(col, fila);
+        return check_column(col) || check_row(row) || check_diagonal(col, row);
     }
 
     bool play() {
