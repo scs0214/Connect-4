@@ -59,7 +59,7 @@ public:
         cout << "\a¡Felicidades! ¡El player" << player<< " acaba de ganar!" << endl;
     }
 
-    bool play_en_column(int col) {
+    bool play_in_column(int col) {
 
         int y = 0;
 
@@ -99,7 +99,7 @@ public:
 
         } while (!hecho);
 
-        return play_en_column(col);
+        return play_in_column(col);
     }
 
     bool check_column(int col) {
