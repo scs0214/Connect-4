@@ -213,7 +213,7 @@ Game initialize_board(int player) {
     return Game;
 }
 
-void comenzar_Game() {
+void begin_Game() {
 
     Game Game = initialize_board(1);   // parámetro: número del que comienza
 
@@ -229,5 +229,5 @@ void comenzar_Game() {
 
 int main() {
     
-    comenzar_Game();
+    begin_Game();
 }
