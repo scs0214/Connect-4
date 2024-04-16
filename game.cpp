@@ -80,7 +80,7 @@ public:
         return check_victory(col, y);
     }
 
-    bool elegir_column() {
+    bool choose_column() {
 
         cout << "¡Es el turno del player" << player<< "!\n\n";   // nombre del player
         int col = 0;
@@ -187,7 +187,7 @@ public:
     bool play() {
 
         show_board();
-        if (elegir_column()) {
+        if (choose_column()) {
             show_board();
             show_winner();
             return true;
