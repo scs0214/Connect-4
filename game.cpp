@@ -77,7 +77,7 @@ public:
         update_simbolito();
         board[col][y] = simbolito;
 
-        return revisar_victoria(col, y);
+        return check_victoria(col, y);
     }
 
     bool elegir_column() {
@@ -102,7 +102,7 @@ public:
         return play_en_column(col);
     }
 
-    bool revisar_column(int col) {
+    bool check_column(int col) {
 
         int contador = 0;
 
@@ -120,7 +120,7 @@ public:
         return false;
     }
 
-    bool revisar_fila(int fila) {
+    bool check_fila(int fila) {
 
         int contador = 0;
 
@@ -138,7 +138,7 @@ public:
         return false;
     }
 
-    bool revisar_diagonal(int col, int fila) {
+    bool check_diagonal(int col, int fila) {
         
         int indice = 1, contador = 1;
 
@@ -179,9 +179,9 @@ public:
         else { return false; }
     }
 
-    bool revisar_victoria(int col, int fila) {
+    bool check_victoria(int col, int fila) {
 
-        return revisar_column(col) || revisar_fila(fila) || revisar_diagonal(col, fila);
+        return check_column(col) || check_fila(fila) || check_diagonal(col, fila);
     }
 
     bool play() {
@@ -199,7 +199,7 @@ public:
     }
 };
 
-Game inicializar_board(int player) {
+Game initialize_board(int player) {
 
     char** board = new char*[columns];
     for (int i = 0; i < columns; i++) {
@@ -215,7 +215,7 @@ Game inicializar_board(int player) {
 
 void comenzar_Game() {
 
-    Game Game = inicializar_board(1);   // parámetro: número del que comienza
+    Game Game = initialize_board(1);   // parámetro: número del que comienza
 
     bool won = false; 
 
