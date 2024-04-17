@@ -1,4 +1,4 @@
-// Code created by: Samir Caro C31666 - Roy Urbina C3---
+// Code created by: Samir Caro C31666 - Roy Urbina C37971
 
 #include <iostream>
 #include <cstdlib> // This library is necessary for the malloc() function to work
@@ -83,71 +83,94 @@ void initializeGame(char** matrix) { // Sets the row and column amounts (which w
 
 int whoWinner(char** matrix) { // Receives the board to go through it and check if there are 4 symbols of the same type in a row
     char wSymbol = '-';
-    int cont;
+    int cont, row, column;
+    bool continueProcess = true;
     bool winnerPlayer = false; // Boolean which makes that if a winner is detected, the rest of the conditions will be ignored
     
     for (int i = 0; i < rowAmount; ++i) {
         for (int j = 0; j < columnAmount; ++j) {
-            if (matrix[i][j] != '-' && !winnerPlayer) {
-                char symbol = matrix[i][j];
-                int row = i;
-                int column = j;
-
+            char symbol = matrix[i][j];
+            cont = 0;
+            if (symbol != '-' && !winnerPlayer) {
+                row = i;
+                continueProcess = true;
                 if (row+3 <= rowAmount-1 && !winnerPlayer) {
-                    cont = 0;
-                    while (row <= rowAmount-1 && cont < 4) {
+                    while (row <= rowAmount-1 && continueProcess) {
                         if (matrix[row][j] == symbol) {
                             cont++;
                             row++;
                         }
+                        else {
+                            continueProcess = false;
+                        }
+
                         if (cont == 4) {
                             winnerPlayer = true;
+                            continueProcess = false;
                             wSymbol = symbol;
                         }
                     }
                 }
+                cont = 0;
+                row = i;
+                column = j;
+                continueProcess = true;
                 if (row+3 <= rowAmount-1 && column-3 >= 0 && !winnerPlayer) {
-                    cont = 0;
-                    row = i;
-                    column = j;
-                    while (row < rowAmount-1 && column >= 0 && cont < 4) {
+                    while (row <= rowAmount-1 && column >= 0 && continueProcess) {
                         if (matrix[row][column] == symbol) {
                             cont++;
                             row++;
                             column--;
                         }
+                        else {
+                            continueProcess = false;
+                        }
+
                         if (cont == 4) {
                             winnerPlayer = true;
+                            continueProcess = false;
                             wSymbol = symbol;
                         }
                     }
                 }
+                cont = 0;
+                row = i;
+                column = j;
+                continueProcess = true;
                 if (row+3 <= rowAmount-1 && column+3 <= columnAmount-1 && !winnerPlayer) {
-                    cont = 0;
-                    row = i;
-                    column = j;
-                    while (row < rowAmount-1 && column <= columnAmount-1 && cont < 4) {
+                    while (row <= rowAmount-1 && column <= columnAmount-1 && continueProcess) {
                         if (matrix[row][column] == symbol) {
                             cont++;
                             row++;
                             column++;
                         }
+                        else {
+                            continueProcess = false;
+                        }
+
                         if (cont == 4) {
                             winnerPlayer = true;
+                            continueProcess = false;
                             wSymbol = symbol;
                         }
                     }
                 }
+                cont = 0;
+                column = j;
+                continueProcess = true;
                 if (column+3 <= columnAmount-1 && !winnerPlayer) {
-                    cont = 0;
-                    column = j;
-                    while (column > columnAmount-1 && cont < 4) {
+                    while (column <= columnAmount-1 && continueProcess) {
                         if (matrix[i][column] == symbol) {
                             cont++;
                             column++;
                         }
+                        else {
+                            continueProcess = false;
+                        }
+                        
                         if (cont == 4) {
                             winnerPlayer = true;
+                            continueProcess = false;
                             wSymbol = symbol;
                         }
                     }
@@ -169,74 +192,6 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
     }
     else {
         return 0;
-    }
-}
-
-char checkSymbol(char** matrix, int rowValue, int colValue, char playerSymbol) {
-    int cont, rowCheck, colCheck;
-    bool killProcess = false;
-    if (rowValue+3 <= rowAmount-1 && !killProcess) {
-        cont = 0;
-        rowCheck = rowValue;
-        while (rowCheck <= rowAmount-1 && cont < 4) {
-            if (matrix[rowCheck][colValue] == playerSymbol) {
-                cont++;
-                rowCheck++;
-            }
-            if (cont == 4) {
-                killProcess = true;
-            }
-        }
-    }
-    if (rowValue+3 <= rowAmount-1 && colValue-3 >= 0 && !killProcess) {
-        cont = 0;
-        rowCheck = rowValue;
-        colCheck = colValue;
-        while (rowCheck < rowAmount-1 && colCheck >= 0 && cont < 4) {
-            if (matrix[rowCheck][colCheck] == playerSymbol) {
-                cont++;
-                rowCheck++;
-                colCheck--;
-            }
-            if (cont == 4) {
-                killProcess = true;
-            }
-        }
-    }
-    if (rowValue+3 <= rowAmount-1 && colValue+3 <= columnAmount-1 && !killProcess) {
-        cont = 0;
-        rowCheck = rowValue;
-        colCheck = colValue;
-        while (rowCheck < rowAmount-1 && colCheck <= columnAmount-1 && cont < 4) {
-            if (matrix[rowCheck][colCheck] == playerSymbol) {
-                cont++;
-                rowCheck++;
-                colCheck++;
-            }
-            if (cont == 4) {
-                killProcess = true;
-            }
-        }
-    }
-    if (colValue+3 <= columnAmount-1 && !killProcess) {
-        cont = 0;
-        colCheck = colValue;
-        while (colCheck > columnAmount-1 && cont < 4) {
-            if (matrix[rowValue][colCheck] == playerSymbol) {
-                cont++;
-                colCheck++;
-            }
-            if (cont == 4) {
-                killProcess = true;
-            }
-        }
-    }
-
-    if (killProcess) {
-        return playerSymbol;
-    }
-    else {
-        return '-';
     }
 }
 
