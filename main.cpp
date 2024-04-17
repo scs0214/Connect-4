@@ -1,47 +1,60 @@
-#include <iostream>
-#include <cstdlib>
+// Code created by: Samir Caro C31666 - Roy Urbina C3---
 
+#include <iostream>
+#include <cstdlib> // This library is necessary for the malloc() function to work
 using namespace std;
 
+bool programLoop = true;
 bool gameLoop = true;
-bool sessionLoop = true;
 int gameOption = 0;
 int columnInput = 0;
-int rowsI = 5;
+int rowsI = 6;
 int columnsI = 7;
-int rowAmount, columnAmount;
+int rowAmount, columnAmount, currentPlayer, winner;
+string p1Name, p2Name; // Used to name players -PENDING-
 
-void fillMatrix(int** matrix, int R, int C) {
-    for (int r = 0; r < R; r++) {
-        for (int c = 0; c < C; c++) {
-            if (matrix[r][c] != 0 && matrix[r][c] != 1) {
-                matrix[r][c] = 0;
+char returnSymbol (int player) { // Receives which player does a move, to place the correct symbol and switch to the other player
+    if (player == 1) {
+        currentPlayer = 2;
+        return 'O';
+    }
+    else {
+        currentPlayer = 1;
+        return 'X';
+    }
+}
+
+void fillBoard(char** matrix, int R, int C) { // Receives the game board and the amount of rows and columns available, to fill empty spaces in the array (so that these spaces are empty for the program)
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            if (matrix[i][j] != '-' && matrix[i][j] != 'O' && matrix[i][j] != 'X') {
+                matrix[i][j] = '-';
             }
         }
     }
 }
 
-void printMatrix(int** matrix, int R, int C) {
-    for (int r = 0; r < R; r++) {
-        for (int c = 0; c < C; c++) {
-            printf("%i ", matrix[r][c], "   ");
+void showBoard(char** matrix, int R, int C) { // Prints the game board
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            printf("| %c ", matrix[i][j]);
         }
-        printf("\n");
+        printf("| \n");
     }
 }
 
-int** increaseMatrixSize (int** originalMatrix, int rowsOld, int columnsOld) {
+char** increaseBoardSize (char** originalMatrix, int rowsOld, int columnsOld) { // Receives the old board, row and column values to assign new values (adds 7 to both rows and columns and creates an auxiliar matrix); then, it frees the memory used by the original matrix to then return the auxiliar matrix (which will be the new board)
     int newRows = rowsOld + 7;
     int newColumns = columnsOld + 7;
 
-    int** auxMatrix = (int**)malloc(newRows * sizeof(int*));
+    char** auxMatrix = (char**)malloc(newRows * sizeof(char*));
     for (int i = 0; i < newRows; ++i) {
-        auxMatrix[i] = (int*)malloc(newColumns * sizeof(int));
+        auxMatrix[i] = (char*)malloc(newColumns * sizeof(char));
     }
 
     for (int i = 0; i < newRows; ++i) {
         for (int j = 0; j < newColumns; ++j) {
-            auxMatrix[i][j] = 0;
+            auxMatrix[i][j] = '-';
         }
     }
 
@@ -59,60 +72,244 @@ int** increaseMatrixSize (int** originalMatrix, int rowsOld, int columnsOld) {
     return auxMatrix;
 }
 
-int main() {
-    printf("CONNECT 4 \n");
-    while(gameLoop) {
-        int** dynamicMatrix = (int**)malloc(rowsI * sizeof(int*));
-        for (int i = 0; i < rowsI; ++i) {
-            dynamicMatrix[i] = (int*)malloc(columnsI * sizeof(int));
-            for (int j = 0; j < columnsI; ++j) {
-                dynamicMatrix[i][j] = 0;
+void initializeGame(char** matrix) { // Sets the row and column amounts (which will be variables), as well as setting the game loop, current player and filling the game board
+    rowAmount = rowsI;
+    columnAmount = columnsI;
+    gameLoop = true;
+    currentPlayer = 1;
+    winner = 0;
+    fillBoard(matrix, rowAmount, columnAmount);
+}
+
+int whoWinner(char** matrix) { // Receives the board to go through it and check if there are 4 symbols of the same type in a row
+    char wSymbol = '-';
+    int cont;
+    bool winnerPlayer = false; // Boolean which makes that if a winner is detected, the rest of the conditions will be ignored
+    
+    for (int i = 0; i < rowAmount; ++i) {
+        for (int j = 0; j < columnAmount; ++j) {
+            if (matrix[i][j] != '-' && !winnerPlayer) {
+                char symbol = matrix[i][j];
+                int row = i;
+                int column = j;
+
+                if (row+3 <= rowAmount-1 && !winnerPlayer) {
+                    cont = 0;
+                    while (row <= rowAmount-1 && cont < 4) {
+                        if (matrix[row][j] == symbol) {
+                            cont++;
+                            row++;
+                        }
+                        if (cont == 4) {
+                            winnerPlayer = true;
+                            wSymbol = symbol;
+                        }
+                    }
+                }
+                if (row+3 <= rowAmount-1 && column-3 >= 0 && !winnerPlayer) {
+                    cont = 0;
+                    row = i;
+                    column = j;
+                    while (row < rowAmount-1 && column >= 0 && cont < 4) {
+                        if (matrix[row][column] == symbol) {
+                            cont++;
+                            row++;
+                            column--;
+                        }
+                        if (cont == 4) {
+                            winnerPlayer = true;
+                            wSymbol = symbol;
+                        }
+                    }
+                }
+                if (row+3 <= rowAmount-1 && column+3 <= columnAmount-1 && !winnerPlayer) {
+                    cont = 0;
+                    row = i;
+                    column = j;
+                    while (row < rowAmount-1 && column <= columnAmount-1 && cont < 4) {
+                        if (matrix[row][column] == symbol) {
+                            cont++;
+                            row++;
+                            column++;
+                        }
+                        if (cont == 4) {
+                            winnerPlayer = true;
+                            wSymbol = symbol;
+                        }
+                    }
+                }
+                if (column+3 <= columnAmount-1 && !winnerPlayer) {
+                    cont = 0;
+                    column = j;
+                    while (column > columnAmount-1 && cont < 4) {
+                        if (matrix[i][column] == symbol) {
+                            cont++;
+                            column++;
+                        }
+                        if (cont == 4) {
+                            winnerPlayer = true;
+                            wSymbol = symbol;
+                        }
+                    }
+                }
             }
         }
-        printf("1- Jugar \n");
+    }
+
+    if (winnerPlayer) {
+        if (wSymbol == 'O') {
+            return 1;
+        }
+        else if (wSymbol == 'X') {
+            return 2;
+        }
+        else {
+            return -1;
+        }
+    }
+    else {
+        return 0;
+    }
+}
+
+char checkSymbol(char** matrix, int rowValue, int colValue, char playerSymbol) {
+    int cont, rowCheck, colCheck;
+    bool killProcess = false;
+    if (rowValue+3 <= rowAmount-1 && !killProcess) {
+        cont = 0;
+        rowCheck = rowValue;
+        while (rowCheck <= rowAmount-1 && cont < 4) {
+            if (matrix[rowCheck][colValue] == playerSymbol) {
+                cont++;
+                rowCheck++;
+            }
+            if (cont == 4) {
+                killProcess = true;
+            }
+        }
+    }
+    if (rowValue+3 <= rowAmount-1 && colValue-3 >= 0 && !killProcess) {
+        cont = 0;
+        rowCheck = rowValue;
+        colCheck = colValue;
+        while (rowCheck < rowAmount-1 && colCheck >= 0 && cont < 4) {
+            if (matrix[rowCheck][colCheck] == playerSymbol) {
+                cont++;
+                rowCheck++;
+                colCheck--;
+            }
+            if (cont == 4) {
+                killProcess = true;
+            }
+        }
+    }
+    if (rowValue+3 <= rowAmount-1 && colValue+3 <= columnAmount-1 && !killProcess) {
+        cont = 0;
+        rowCheck = rowValue;
+        colCheck = colValue;
+        while (rowCheck < rowAmount-1 && colCheck <= columnAmount-1 && cont < 4) {
+            if (matrix[rowCheck][colCheck] == playerSymbol) {
+                cont++;
+                rowCheck++;
+                colCheck++;
+            }
+            if (cont == 4) {
+                killProcess = true;
+            }
+        }
+    }
+    if (colValue+3 <= columnAmount-1 && !killProcess) {
+        cont = 0;
+        colCheck = colValue;
+        while (colCheck > columnAmount-1 && cont < 4) {
+            if (matrix[rowValue][colCheck] == playerSymbol) {
+                cont++;
+                colCheck++;
+            }
+            if (cont == 4) {
+                killProcess = true;
+            }
+        }
+    }
+
+    if (killProcess) {
+        return playerSymbol;
+    }
+    else {
+        return '-';
+    }
+}
+
+void declareWinner(char** matrix, int winnerP) {
+    if (winnerP = 1) {
+        printf("¡Felicidades Jugador 1, has ganado el juego! \n");
+    }
+    else if (winnerP = 2) {
+        printf("¡Felicidades Jugador 2, has ganado el juego! \n");
+    }
+    else if (winnerP = -1) {
+        printf("ERROR \n");
+    }
+    showBoard(matrix, rowAmount, columnAmount);
+    gameLoop = false;
+}
+
+int main() {
+    printf("CONNECT 4 \n");
+    while(programLoop) {
+        char** board = (char**)malloc(rowsI * sizeof(char*)); // Creates the game board (as a list of lists, which lets it be a dynamic matrix)
+        for (int i = 0; i < rowsI; ++i) {
+            board[i] = (char*)malloc(columnsI * sizeof(char));
+        }
+        initializeGame(board);
+        printf("1- 1 Jugador \n");
+        printf("2- Multijugador \n");
         printf("0- Salir \n");
         printf("Digite el numero de la opcion que gusta ejecutar: ");
         cin >> gameOption;
     
-        if(gameOption == 1) {
-            rowAmount = rowsI;
-            columnAmount = columnsI;
-            fillMatrix(dynamicMatrix, rowAmount, columnAmount);
-            while(sessionLoop) {
-                printMatrix(dynamicMatrix, rowAmount, columnAmount);
+        if(gameOption == 2) { // Multiplayer Mode
+            while(gameLoop) {
                 bool insertToken = false;
+                showBoard(board, rowAmount, columnAmount);
                 printf("Digite el numero de la columna en la que quiere depositar su ficha: ");
                 cin >> columnInput;
-                if (dynamicMatrix[0][columnInput] != 0 || columnInput > columnAmount-1) {
+
+                if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
                     while (columnInput > columnAmount-1) {
-                        dynamicMatrix = increaseMatrixSize(dynamicMatrix, rowAmount, columnAmount);
+                        board = increaseBoardSize(board, rowAmount, columnAmount);
                         rowAmount = rowAmount + 7;
                         columnAmount = columnAmount + 7;
                     }
                 }
                 int rowInput = rowAmount - 1;
-                while (!insertToken) {
-                    if (dynamicMatrix[rowInput][columnInput] == 0) {
-                        dynamicMatrix[rowInput][columnInput] = 1;
-                        insertToken = true;
+                while (!insertToken) { // While loop that reduces the value of the row to deposit the token in an empty space
+                    if (board[rowInput][columnInput] == '-') {
+                        board[rowInput][columnInput] = returnSymbol(currentPlayer);
+                        insertToken = true; 
                     }
                     else {
                         rowInput--;
                     }
                 }
+
+                winner = whoWinner(board);
+                if (winner != 0) {
+                    declareWinner(board, winner);
+                }
             }
         }
 
-        else if(gameOption == 0) {
+        else if (gameOption == 0) { // Exit option
             for (int i = 0; i < rowAmount; ++i) {
-                free(dynamicMatrix[i]);
+                free(board[i]);
             }
-            free (dynamicMatrix);
+            free (board);
             printf("Hasta luego! \n");
-            gameLoop = false;
+            programLoop = false;
         }
 
-        else{
+        else { // User types a non-existent option
             printf("El número digitado no es válido. \n");
         }
     } 
