@@ -11,18 +11,7 @@ int columnInput = 0;
 int rowsI = 6;
 int columnsI = 7;
 int rowAmount, columnAmount, currentPlayer, winner;
-string p1Name, p2Name; // Used to name players -PENDING-
-
-char returnSymbol (int player) { // Receives which player does a move, to place the correct symbol and switch to the other player
-    if (player == 1) {
-        currentPlayer = 2;
-        return 'O';
-    }
-    else {
-        currentPlayer = 1;
-        return 'X';
-    }
-}
+bool player2AI;
 
 void fillBoard(char** matrix, int R, int C) { // Receives the game board and the amount of rows and columns available, to fill empty spaces in the array (so that these spaces are empty for the program)
     for (int i = 0; i < R; i++) {
@@ -32,6 +21,15 @@ void fillBoard(char** matrix, int R, int C) { // Receives the game board and the
             }
         }
     }
+}
+
+void initializeGame(char** matrix) { // Sets the row and column amounts (which will be variables), as well as setting the game loop, current player and filling the game board
+    rowAmount = rowsI;
+    columnAmount = columnsI;
+    gameLoop = true;
+    currentPlayer = 1;
+    winner = 0;
+    fillBoard(matrix, rowAmount, columnAmount);
 }
 
 void showBoard(char** matrix, int R, int C) { // Prints the game board
@@ -72,13 +70,15 @@ char** increaseBoardSize (char** originalMatrix, int rowsOld, int columnsOld) { 
     return auxMatrix;
 }
 
-void initializeGame(char** matrix) { // Sets the row and column amounts (which will be variables), as well as setting the game loop, current player and filling the game board
-    rowAmount = rowsI;
-    columnAmount = columnsI;
-    gameLoop = true;
-    currentPlayer = 1;
-    winner = 0;
-    fillBoard(matrix, rowAmount, columnAmount);
+char returnSymbol (int player) { // Receives which player does a move, to place the correct symbol and switch to the other player
+    if (player == 1) {
+        currentPlayer = 2;
+        return 'O';
+    }
+    else {
+        currentPlayer = 1;
+        return 'X';
+    }
 }
 
 int whoWinner(char** matrix) { // Receives the board to go through it and check if there are 4 symbols of the same type in a row
@@ -202,6 +202,9 @@ void declareWinner(char** matrix, int winnerP) {
     else if (winnerP = 2) {
         printf("¡Felicidades Jugador 2, has ganado el juego! \n");
     }
+    else if (winnerP = 2 && player2AI) {
+        printf("¡Qué lástima %s, la IA ha ganado el juego! \n");
+    }
     else if (winnerP = -1) {
         printf("ERROR \n");
     }
@@ -222,12 +225,51 @@ int main() {
         printf("0- Salir \n");
         printf("Digite el numero de la opcion que gusta ejecutar: ");
         cin >> gameOption;
-    
-        if(gameOption == 2) { // Multiplayer Mode
+
+        if(gameOption == 1) { // Single Player Mode
+            player2AI = true;
             while(gameLoop) {
                 bool insertToken = false;
                 showBoard(board, rowAmount, columnAmount);
-                printf("Digite el numero de la columna en la que quiere depositar su ficha: ");
+                if (currentPlayer == 1) {
+                    printf("Digite el numero de la columna en la que quiere depositar su ficha: ");
+                    cin >> columnInput;
+                }
+                else {
+                    // AI plays (needs to set columnInput)
+                }
+
+                if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
+                    while (columnInput > columnAmount-1) {
+                        board = increaseBoardSize(board, rowAmount, columnAmount);
+                        rowAmount = rowAmount + 7;
+                        columnAmount = columnAmount + 7;
+                    }
+                }
+                int rowInput = rowAmount - 1;
+                while (!insertToken) { // While loop that reduces the value of the row to deposit the token in an empty space
+                    if (board[rowInput][columnInput] == '-') {
+                        board[rowInput][columnInput] = returnSymbol(currentPlayer);
+                        insertToken = true; 
+                    }
+                    else {
+                        rowInput--;
+                    }
+                }
+
+                winner = whoWinner(board);
+                if (winner != 0) {
+                    declareWinner(board, winner);
+                }
+            }
+        }
+    
+        if(gameOption == 2) { // Multiplayer Mode
+            player2AI = false; 
+            while(gameLoop) {
+                bool insertToken = false;
+                showBoard(board, rowAmount, columnAmount);
+                printf("Jugador %i, digite el numero de la columna en la que quiere depositar su ficha: ", currentPlayer);
                 cin >> columnInput;
 
                 if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
