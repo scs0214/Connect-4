@@ -11,7 +11,7 @@ int columnInput = 0;
 int rowsI = 6;
 int columnsI = 7;
 int rowAmount, columnAmount, currentPlayer, winner;
-bool player2AI;
+bool player2AI; // Boolean that determines if player 2 was the AI (used when printing the winner message if necessary)
 
 void fillBoard(char** matrix, int R, int C) { // Receives the game board and the amount of rows and columns available, to fill empty spaces in the array (so that these spaces are empty for the program)
     for (int i = 0; i < R; i++) {
@@ -81,17 +81,17 @@ char returnSymbol (int player) { // Receives which player does a move, to place 
     }
 }
 
-int whoWinner(char** matrix) { // Receives the board to go through it and check if there are 4 symbols of the same type in a row
+int whoWinner(char** matrix) { // Receives the board to go through it and check if there are 4 symbols of the same type in a row, resets values between each condition
     char wSymbol = '-';
     int cont, row, column;
-    bool continueProcess = true;
+    bool continueProcess; // Avoid infinite loops
     bool winnerPlayer = false; // Boolean which makes that if a winner is detected, the rest of the conditions will be ignored
     
-    for (int i = 0; i < rowAmount; ++i) {
+    for (int i = 0; i < rowAmount; ++i) { // Checks vertically
         for (int j = 0; j < columnAmount; ++j) {
             char symbol = matrix[i][j];
-            cont = 0;
             if (symbol != '-' && !winnerPlayer) {
+                cont = 0;
                 row = i;
                 continueProcess = true;
                 if (row+3 <= rowAmount-1 && !winnerPlayer) {
@@ -115,7 +115,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
                 row = i;
                 column = j;
                 continueProcess = true;
-                if (row+3 <= rowAmount-1 && column-3 >= 0 && !winnerPlayer) {
+                if (row+3 <= rowAmount-1 && column-3 >= 0 && !winnerPlayer) { // Checks diagonally left down
                     while (row <= rowAmount-1 && column >= 0 && continueProcess) {
                         if (matrix[row][column] == symbol) {
                             cont++;
@@ -137,7 +137,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
                 row = i;
                 column = j;
                 continueProcess = true;
-                if (row+3 <= rowAmount-1 && column+3 <= columnAmount-1 && !winnerPlayer) {
+                if (row+3 <= rowAmount-1 && column+3 <= columnAmount-1 && !winnerPlayer) { // Checks diagonally right down
                     while (row <= rowAmount-1 && column <= columnAmount-1 && continueProcess) {
                         if (matrix[row][column] == symbol) {
                             cont++;
@@ -158,7 +158,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
                 cont = 0;
                 column = j;
                 continueProcess = true;
-                if (column+3 <= columnAmount-1 && !winnerPlayer) {
+                if (column+3 <= columnAmount-1 && !winnerPlayer) { // Checks horizontally
                     while (column <= columnAmount-1 && continueProcess) {
                         if (matrix[i][column] == symbol) {
                             cont++;
@@ -179,7 +179,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
         }
     }
 
-    if (winnerPlayer) {
+    if (winnerPlayer) { // Checks if there was a winner and returns the player number based on the symbol
         if (wSymbol == 'O') {
             return 1;
         }
@@ -195,7 +195,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
     }
 }
 
-void declareWinner(char** matrix, int winnerP) {
+void declareWinner(char** matrix, int winnerP) { // Prints different messages depending on who won
     if (winnerP = 1) {
         printf("¡Felicidades Jugador 1, has ganado el juego! \n");
     }
