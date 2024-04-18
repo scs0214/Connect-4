@@ -195,6 +195,252 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
     }
 }
 
+int AIPlay(char** matrix) {
+    int cont, row, col, inputColumn;
+    bool continueProcess;
+    bool inputDefined = false;
+
+    for (int i = 0; i < rowAmount; ++i) {
+        for (int j = 0; j < columnAmount; ++j) {
+            if (matrix[i][j] ==  'O') {
+                cont = 0;
+                row = i;
+                col = j;
+                continueProcess = true;
+                if (row+2 <= rowAmount-1 && !inputDefined) { // Checks vertically
+                    while (row <= rowAmount-1 && continueProcess) {
+                        if (matrix[row][j] == 'O') {
+                            cont++;
+                            row++;
+                        }
+                        else {
+                            continueProcess = false;
+                        }
+
+                        if (cont == 3) {
+                            if (i == 0) {
+                                inputColumn = j;
+                                inputDefined = true;
+                            }
+                            else if (i > 0) {
+                                if (matrix[i-1][j] == '-') {
+                                    inputColumn = j;
+                                    inputDefined = true;
+                                }
+                            }
+                            continueProcess = false;
+                        }
+                    }
+                }
+            }
+            cont = 0;
+            row = i;
+            col = j;
+            continueProcess = true;
+            if (!inputDefined) { // Checks horizontally
+                while (col <= columnAmount-1 && continueProcess) {
+                    if (matrix[i][col] == 'O') {
+                        cont++;
+                        col++;
+                    }
+                    else {
+                        continueProcess = false;
+                    }
+
+                    if (cont == 3) {
+                        if (i == rowAmount-1) {
+                            if (j == 0) {
+                                if (matrix[i][col+1] == '-') {
+                                    inputColumn = col+1;
+                                    inputDefined = true;
+                                }
+                            }
+                            else if (j >= 1) {
+                                if (matrix[i][j-1] == '-') {
+                                    inputColumn = j-1;
+                                    inputDefined = true;
+                                }
+                                else if (matrix[i][col+1] == '-') {
+                                    inputColumn = col-1;
+                                    inputDefined = true;
+                                }
+                            }
+                        }
+                        else if (i < rowAmount-1) {
+                            if (j == 0) {
+                                if (matrix[i][col+1] == '-' && matrix[i+1][col+1] != '-') {
+                                    inputColumn = col+1;
+                                    inputDefined = true;
+                                }
+                            }
+                            else if (j >= 1) {
+                                if (matrix[i][j-1] == '-' && matrix[i+1][j-1] != '-') {
+                                    inputColumn = j-1;
+                                    inputDefined = true;
+                                }
+                                else if (matrix[i][col+1] == '-' && matrix[i+1][col+1] != '-') {
+                                    inputColumn = col-1;
+                                    inputDefined = true;
+                                }
+                            }
+                        }
+                        continueProcess = false;
+                    }
+                }
+            }
+            cont = 0;
+            row = i;
+            col = j;
+            continueProcess = true;
+            if (row+2 <= rowAmount-1 && !inputDefined) { // Check diagonally down left
+                while (row <= rowAmount-1 && continueProcess) {
+                    if (col > 0) {
+                        if (matrix[row][col] == 'O') {
+                        cont++;
+                        row++;
+                        col--;
+                        }
+                        else {
+                            continueProcess = false;
+                        }
+                    }
+                    else {
+                        continueProcess = false;
+                    }
+
+                    if (cont == 3) {
+                        if (row == rowAmount-1) {
+                            if (i == 0 && matrix[i][j+1] != '-') {
+                                inputColumn = j+1;
+                                inputDefined = true;
+                            }
+                            else if (i > 0) {
+                                if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
+                                    inputColumn = j+1;
+                                    inputDefined = true;
+                                }
+                            }
+                        }
+                        else if (row < rowAmount-1) {
+                            if (col == 0) {
+                                if (i == 0 && matrix[i][j+1] != '-') {
+                                    inputColumn = j+1;
+                                    inputDefined = true;
+                                }
+                                else if (i > 0) {
+                                    if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
+                                        inputColumn = j+1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                            else if (col > 0) {
+                                if (row+1 == rowAmount-1) {
+                                    if (matrix[row+1][col-1] == '-') {
+                                        inputColumn = col-1;
+                                        inputDefined = true;
+                                    }
+                                    else if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
+                                        inputColumn = j+1;
+                                        inputDefined = true;
+                                    }
+                                }
+                                else if (row+1 < rowAmount-1) {
+                                    if (matrix[row+1][col-1] == '-' && matrix[row+2][col-1] != '-') {
+                                        inputColumn = col-1;
+                                        inputDefined = true;
+                                    }
+                                    else if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
+                                        inputColumn = j+1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                        }
+                        continueProcess = false;
+                    }
+                }
+            }
+            cont = 0;
+            row = i;
+            col = j;
+            continueProcess = true;
+            if (row+2 <= rowAmount-1 && !inputDefined) { // Check diagonally down right
+                while (row <= rowAmount-1 && continueProcess) {
+                    if (matrix[row][col] == 'O') {
+                        cont++;
+                        row++;
+                        col++;
+                    }
+                    else {
+                        continueProcess = false;
+                    }
+
+                    if (cont == 3) {
+                        if (row == rowAmount-1) {
+                            if (j-1 >= 0) {
+                                if (i == 0 && matrix[i][j-1] != '-') {
+                                    inputColumn = j-1;
+                                    inputDefined = true;
+                                }
+                                else if (i > 0) {
+                                    if (matrix[i-1][j-1] == '-' && matrix[i][j-1] != '-') {
+                                        inputColumn = j-1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (row < rowAmount-1) {
+                            if (j-1 >= 0) {
+                                if (i == 0 && matrix[i][j-1] != '-') {
+                                    inputColumn = j-1;
+                                    inputDefined = true;
+                                }
+                                else if (i > 0) {
+                                    if (matrix[i-1][j-1] == '-' && matrix[i][j-1] != '-') {
+                                        inputColumn = j-1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                            if (row+1 == rowAmount-1) {
+                                if (col+1 > columnAmount-1) {
+                                    inputColumn = col+1;
+                                    inputDefined = true;
+                                }
+                                else if (col+1 <= columnAmount-1) {
+                                    if (matrix[row+1][col+1] == '-') {
+                                        inputColumn = col+1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                            else if (row+1 < rowAmount-1) {
+                                if (col+1 <= columnAmount-1) {
+                                    if (matrix[row+1][col+1] == '-' && matrix[row+2][col+1] != '-') {
+                                        inputColumn = col+1;
+                                        inputDefined = true;
+                                    }
+                                }
+                            }
+                        }
+                        continueProcess = false;
+                    }
+                }
+            }
+        }
+    }
+
+    if (inputDefined) {
+        return inputColumn;
+    }
+    else {
+        int randomNumber = 0; // Generar numero aleatorio
+        return randomNumber;
+    }
+}
+
 void declareWinner(char** matrix, int winnerP) { // Prints different messages depending on who won
     if (winnerP = 1) {
         printf("¡Felicidades Jugador 1, has ganado el juego! \n");
@@ -203,7 +449,7 @@ void declareWinner(char** matrix, int winnerP) { // Prints different messages de
         printf("¡Felicidades Jugador 2, has ganado el juego! \n");
     }
     else if (winnerP = 2 && player2AI) {
-        printf("¡Qué lástima %s, la IA ha ganado el juego! \n");
+        printf("¡Qué lástima, la IA ha ganado el juego! \n");
     }
     else if (winnerP = -1) {
         printf("ERROR \n");
@@ -227,16 +473,16 @@ int main() {
         cin >> gameOption;
 
         if(gameOption == 1) { // Single Player Mode
-            player2AI = true;
+            player2AI = true; 
             while(gameLoop) {
                 bool insertToken = false;
-                showBoard(board, rowAmount, columnAmount);
                 if (currentPlayer == 1) {
+                    showBoard(board, rowAmount, columnAmount);
                     printf("Digite el numero de la columna en la que quiere depositar su ficha: ");
                     cin >> columnInput;
                 }
-                else {
-                    // AI plays (needs to set columnInput)
+                if (currentPlayer == 2) {
+                    AIPlay(board);
                 }
 
                 if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
