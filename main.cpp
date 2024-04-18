@@ -196,7 +196,7 @@ int whoWinner(char** matrix) { // Receives the board to go through it and check 
 }
 
 int AIPlay(char** matrix) {
-    int cont, row, col, inputColumn;
+    int cont, row, col, inputCol;
     bool continueProcess;
     bool inputDefined = false;
 
@@ -219,12 +219,12 @@ int AIPlay(char** matrix) {
 
                         if (cont == 3) {
                             if (i == 0) {
-                                inputColumn = j;
+                                inputCol = j;
                                 inputDefined = true;
                             }
                             else if (i > 0) {
                                 if (matrix[i-1][j] == '-') {
-                                    inputColumn = j;
+                                    inputCol = j;
                                     inputDefined = true;
                                 }
                             }
@@ -251,17 +251,17 @@ int AIPlay(char** matrix) {
                         if (i == rowAmount-1) {
                             if (j == 0) {
                                 if (matrix[i][col+1] == '-') {
-                                    inputColumn = col+1;
+                                    inputCol = col+1;
                                     inputDefined = true;
                                 }
                             }
                             else if (j >= 1) {
                                 if (matrix[i][j-1] == '-') {
-                                    inputColumn = j-1;
+                                    inputCol = j-1;
                                     inputDefined = true;
                                 }
                                 else if (matrix[i][col+1] == '-') {
-                                    inputColumn = col-1;
+                                    inputCol = col-1;
                                     inputDefined = true;
                                 }
                             }
@@ -269,17 +269,17 @@ int AIPlay(char** matrix) {
                         else if (i < rowAmount-1) {
                             if (j == 0) {
                                 if (matrix[i][col+1] == '-' && matrix[i+1][col+1] != '-') {
-                                    inputColumn = col+1;
+                                    inputCol = col+1;
                                     inputDefined = true;
                                 }
                             }
                             else if (j >= 1) {
                                 if (matrix[i][j-1] == '-' && matrix[i+1][j-1] != '-') {
-                                    inputColumn = j-1;
+                                    inputCol = j-1;
                                     inputDefined = true;
                                 }
                                 else if (matrix[i][col+1] == '-' && matrix[i+1][col+1] != '-') {
-                                    inputColumn = col-1;
+                                    inputCol = col-1;
                                     inputDefined = true;
                                 }
                             }
@@ -311,12 +311,12 @@ int AIPlay(char** matrix) {
                     if (cont == 3) {
                         if (row == rowAmount-1) {
                             if (i == 0 && matrix[i][j+1] != '-') {
-                                inputColumn = j+1;
+                                inputCol = j+1;
                                 inputDefined = true;
                             }
                             else if (i > 0) {
                                 if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
-                                    inputColumn = j+1;
+                                    inputCol = j+1;
                                     inputDefined = true;
                                 }
                             }
@@ -324,12 +324,12 @@ int AIPlay(char** matrix) {
                         else if (row < rowAmount-1) {
                             if (col == 0) {
                                 if (i == 0 && matrix[i][j+1] != '-') {
-                                    inputColumn = j+1;
+                                    inputCol = j+1;
                                     inputDefined = true;
                                 }
                                 else if (i > 0) {
                                     if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
-                                        inputColumn = j+1;
+                                        inputCol = j+1;
                                         inputDefined = true;
                                     }
                                 }
@@ -337,21 +337,21 @@ int AIPlay(char** matrix) {
                             else if (col > 0) {
                                 if (row+1 == rowAmount-1) {
                                     if (matrix[row+1][col-1] == '-') {
-                                        inputColumn = col-1;
+                                        inputCol = col-1;
                                         inputDefined = true;
                                     }
                                     else if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
-                                        inputColumn = j+1;
+                                        inputCol = j+1;
                                         inputDefined = true;
                                     }
                                 }
                                 else if (row+1 < rowAmount-1) {
                                     if (matrix[row+1][col-1] == '-' && matrix[row+2][col-1] != '-') {
-                                        inputColumn = col-1;
+                                        inputCol = col-1;
                                         inputDefined = true;
                                     }
                                     else if (matrix[i-1][j+1] == '-' && matrix[i][j+1] != '-') {
-                                        inputColumn = j+1;
+                                        inputCol = j+1;
                                         inputDefined = true;
                                     }
                                 }
@@ -380,12 +380,12 @@ int AIPlay(char** matrix) {
                         if (row == rowAmount-1) {
                             if (j-1 >= 0) {
                                 if (i == 0 && matrix[i][j-1] != '-') {
-                                    inputColumn = j-1;
+                                    inputCol = j-1;
                                     inputDefined = true;
                                 }
                                 else if (i > 0) {
                                     if (matrix[i-1][j-1] == '-' && matrix[i][j-1] != '-') {
-                                        inputColumn = j-1;
+                                        inputCol = j-1;
                                         inputDefined = true;
                                     }
                                 }
@@ -394,24 +394,24 @@ int AIPlay(char** matrix) {
                         else if (row < rowAmount-1) {
                             if (j-1 >= 0) {
                                 if (i == 0 && matrix[i][j-1] != '-') {
-                                    inputColumn = j-1;
+                                    inputCol = j-1;
                                     inputDefined = true;
                                 }
                                 else if (i > 0) {
                                     if (matrix[i-1][j-1] == '-' && matrix[i][j-1] != '-') {
-                                        inputColumn = j-1;
+                                        inputCol = j-1;
                                         inputDefined = true;
                                     }
                                 }
                             }
                             if (row+1 == rowAmount-1) {
                                 if (col+1 > columnAmount-1) {
-                                    inputColumn = col+1;
+                                    inputCol = col+1;
                                     inputDefined = true;
                                 }
                                 else if (col+1 <= columnAmount-1) {
                                     if (matrix[row+1][col+1] == '-') {
-                                        inputColumn = col+1;
+                                        inputCol = col+1;
                                         inputDefined = true;
                                     }
                                 }
@@ -419,7 +419,7 @@ int AIPlay(char** matrix) {
                             else if (row+1 < rowAmount-1) {
                                 if (col+1 <= columnAmount-1) {
                                     if (matrix[row+1][col+1] == '-' && matrix[row+2][col+1] != '-') {
-                                        inputColumn = col+1;
+                                        inputCol = col+1;
                                         inputDefined = true;
                                     }
                                 }
@@ -433,10 +433,10 @@ int AIPlay(char** matrix) {
     }
 
     if (inputDefined) {
-        return inputColumn;
+        return inputCol;
     }
     else {
-        int randomNumber = 0; // Generar numero aleatorio
+        int randomNumber = rand() % columnAmount;
         return randomNumber;
     }
 }
@@ -485,11 +485,13 @@ int main() {
                     AIPlay(board);
                 }
 
-                if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
-                    while (columnInput > columnAmount-1) {
+                if (board[0][columnInput] != '-' || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
+                    bool rowFix = false;
+                    while (columnInput > columnAmount-1 || !rowFix) {
                         board = increaseBoardSize(board, rowAmount, columnAmount);
                         rowAmount = rowAmount + 7;
                         columnAmount = columnAmount + 7;
+                        rowFix = true;
                     }
                 }
                 int rowInput = rowAmount - 1;
@@ -518,11 +520,13 @@ int main() {
                 printf("Jugador %i, digite el numero de la columna en la que quiere depositar su ficha: ", currentPlayer);
                 cin >> columnInput;
 
-                if (board[0][columnInput] != 0 || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
-                    while (columnInput > columnAmount-1) {
+                if (board[0][columnInput] != '-' || columnInput > columnAmount-1) { // If structure that checks if the game board's size needs to be increased
+                    bool rowFix = false;
+                    while (columnInput > columnAmount-1 || !rowFix) {
                         board = increaseBoardSize(board, rowAmount, columnAmount);
                         rowAmount = rowAmount + 7;
                         columnAmount = columnAmount + 7;
+                        rowFix = true;
                     }
                 }
                 int rowInput = rowAmount - 1;
